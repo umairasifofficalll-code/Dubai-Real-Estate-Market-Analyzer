@@ -1,0 +1,72 @@
+// ============================================================================
+// 1) DATE TABLE  (Modeling > New table). Mark it as a date table on 'Date'[Date],
+//    then relate 'Date'[Date] (1) -> Transactions[date] (*).
+// ============================================================================
+Date =
+ADDCOLUMNS (
+    CALENDAR ( DATE ( 2023, 1, 1 ), DATE ( 2026, 12, 31 ) ),
+    "Year", YEAR ( [Date] ),
+    "Quarter", "Q" & QUARTER ( [Date] ),
+    "Year Quarter", YEAR ( [Date] ) & "-Q" & QUARTER ( [Date] ),
+    "Month No", MONTH ( [Date] ),
+    "Month", FORMAT ( [Date], "MMM" )
+)
+// Sort 'Date'[Month] by 'Date'[Month No].
+
+// ============================================================================
+// 2) MEASURES  (create each with Modeling > New measure, home table Transactions)
+// ============================================================================
+Total Transactions = COUNTROWS ( Transactions )
+
+Total Sales Value = SUM ( Transactions[sale_price_aed] )
+// Format: Currency, custom format string  "AED "#,0.0,,"M"  (or use display units = Millions)
+
+Avg Price per Sqft = AVERAGE ( Transactions[price_per_sqft_aed] )
+
+Median Sale Price = MEDIAN ( Transactions[sale_price_aed] )
+
+Mean Sale Price = AVERAGE ( Transactions[sale_price_aed] )
+
+Avg Gross Yield % = AVERAGE ( Transactions[gross_yield_pct] ) / 100
+// gross_yield_pct is blank for off-plan, so this is automatically "ready units only". Format as %.
+
+Avg Days on Market = AVERAGE ( Transactions[days_on_market] )
+
+Avg Annual Rent = AVERAGE ( Transactions[annual_rent_aed] )
+
+Avg Price per Sqft PY =
+CALCULATE ( [Avg Price per Sqft], SAMEPERIODLASTYEAR ( 'Date'[Date] ) )
+
+YoY Price Growth % =
+DIVIDE ( [Avg Price per Sqft] - [Avg Price per Sqft PY], [Avg Price per Sqft PY] )
+
+// Best area card (Page 2): area with the highest yield under current filters
+Best Yield Area =
+VAR t =
+    ADDCOLUMNS (
+        FILTER ( VALUES ( Transactions[area] ), NOT ISBLANK ( [Avg Gross Yield %] ) ),
+        "@y", [Avg Gross Yield %]
+    )
+VAR top1 = TOPN ( 1, t, [@y], DESC )
+RETURN
+    IF (
+        ISEMPTY ( t ),
+        "No ready units",
+        MAXX ( top1, Transactions[area] ) & " · " & FORMAT ( MAXX ( top1, [@y] ), "0.00%" )
+    )
+
+// Highlight colour for the yield bar chart (Format > Bars > fx > Field value = this measure)
+Yield Bar Colour =
+VAR best = MAXX ( ALLSELECTED ( Transactions[area] ), [Avg Gross Yield %] )
+RETURN IF ( [Avg Gross Yield %] = best, "#EB6834", "#2A78D6" )
+
+// Like-for-like Jan-Sep comparison (trap: 2026 stops in September)
+Avg Price per Sqft Jan-Sep =
+CALCULATE ( [Avg Price per Sqft], 'Date'[Month No] <= 9 )
+
+// Mean line / median line for the histogram (Analytics pane can also add these)
+Mean Price per Sqft (all bins) = CALCULATE ( [Avg Price per Sqft], REMOVEFILTERS ( Transactions[price_per_sqft_aed] ) )
+Median Price per Sqft (all bins) = CALCULATE ( MEDIAN ( Transactions[price_per_sqft_aed] ), REMOVEFILTERS ( Transactions[price_per_sqft_aed] ) )
+
+// Dynamic title example
+Title Yield = "Best yield in view: " & [Best Yield Area]

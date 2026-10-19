@@ -1,0 +1,558 @@
+{
+  "raw_rows": 1800,
+  "raw_cols": 21,
+  "missing_before": {
+    "building_age_years": 36,
+    "view": 36,
+    "annual_rent_aed": 707,
+    "gross_yield_pct": 707
+  },
+  "missing_after": {
+    "building_age_years": 36,
+    "annual_rent_aed": 707,
+    "gross_yield_pct": 707
+  },
+  "clean_rows": 1800,
+  "n_ready": 1093,
+  "n_offplan": 707,
+  "date_min": "2023-01-02",
+  "date_max": "2026-09-30",
+  "outliers": {
+    "n": 32,
+    "upper_fence": 4617,
+    "areas": {
+      "Palm Jumeirah": 32
+    }
+  },
+  "kpi": {
+    "transactions": 1800,
+    "sales_value": 6988426000,
+    "avg_ppsf": 2340.8,
+    "median_ppsf": 2326.0,
+    "mean_price": 3882459,
+    "median_price": 2615500,
+    "std_price": 4260097,
+    "avg_yield": 5.57,
+    "avg_dom": 30.9
+  },
+  "area": [
+    {
+      "area": "Palm Jumeirah",
+      "n": 123,
+      "ppsf": 4161.94,
+      "mean_price": 12101406.5,
+      "median_price": 9891000.0,
+      "dom": 33.99,
+      "yield": 4.19
+    },
+    {
+      "area": "Downtown Dubai",
+      "n": 188,
+      "ppsf": 3239.7,
+      "mean_price": 2992553.19,
+      "median_price": 2641000.0,
+      "dom": 35.53,
+      "yield": 4.91
+    },
+    {
+      "area": "Dubai Hills Estate",
+      "n": 229,
+      "ppsf": 2644.91,
+      "mean_price": 7021087.34,
+      "median_price": 5869000.0,
+      "dom": 28.93,
+      "yield": 5.15
+    },
+    {
+      "area": "Jumeirah Beach Residence",
+      "n": 151,
+      "ppsf": 2616.48,
+      "mean_price": 2655006.62,
+      "median_price": 2445000.0,
+      "dom": 31.87,
+      "yield": 5.44
+    },
+    {
+      "area": "Dubai Marina",
+      "n": 245,
+      "ppsf": 2389.13,
+      "mean_price": 2324269.39,
+      "median_price": 2124000.0,
+      "dom": 33.86,
+      "yield": 5.62
+    },
+    {
+      "area": "Business Bay",
+      "n": 319,
+      "ppsf": 2371.18,
+      "mean_price": 2460291.54,
+      "median_price": 2221000.0,
+      "dom": 26.99,
+      "yield": 5.92
+    },
+    {
+      "area": "Arabian Ranches",
+      "n": 110,
+      "ppsf": 1822.68,
+      "mean_price": 6438100.0,
+      "median_price": 5360500.0,
+      "dom": 36.56,
+      "yield": 4.72
+    },
+    {
+      "area": "Jumeirah Village Circle (JVC)",
+      "n": 317,
+      "ppsf": 1362.96,
+      "mean_price": 2171066.25,
+      "median_price": 2123000.0,
+      "dom": 27.86,
+      "yield": 7.11
+    },
+    {
+      "area": "Dubai South",
+      "n": 118,
+      "ppsf": 995.3,
+      "mean_price": 1507796.61,
+      "median_price": 1435000.0,
+      "dom": 29.79,
+      "yield": 7.52
+    }
+  ],
+  "ppsf_year_full": {
+    "2023": 1945.2,
+    "2024": 2228.1,
+    "2025": 2522.9,
+    "2026": 2728.5
+  },
+  "ppsf_year_jan_sep": {
+    "2023": 1901.3,
+    "2024": 2167.4,
+    "2025": 2513.8,
+    "2026": 2728.5
+  },
+  "yoy_jan_sep": {
+    "2024": 14.0,
+    "2025": 16.0,
+    "2026": 8.5
+  },
+  "cagr_2023_2025": 13.9,
+  "dom_year": {
+    "2023": 33.4,
+    "2024": 34.9,
+    "2025": 27.8,
+    "2026": 26.5
+  },
+  "tx_year": {
+    "2023": 452,
+    "2024": 482,
+    "2025": 499,
+    "2026": 367
+  },
+  "tx_month": {
+    "1": 209,
+    "2": 174,
+    "3": 139,
+    "4": 158,
+    "5": 146,
+    "6": 160,
+    "7": 129,
+    "8": 116,
+    "9": 139,
+    "10": 166,
+    "11": 147,
+    "12": 117
+  },
+  "tx_quarter": {
+    "Q1": 522,
+    "Q2": 464,
+    "Q3": 384,
+    "Q4": 430
+  },
+  "ptype_share": {
+    "Apartment": 70.3,
+    "Townhouse": 18.8,
+    "Villa": 10.9
+  },
+  "ramadan": {
+    "tx_in": 124,
+    "tx_out": 1676,
+    "share_in_pct": 6.9,
+    "days_in": 116,
+    "tx_per_day_in": 1.07,
+    "tx_per_day_out": 1.34
+  },
+  "yield_area": {
+    "Dubai South": 7.52,
+    "Jumeirah Village Circle (JVC)": 7.11,
+    "Business Bay": 5.92,
+    "Dubai Marina": 5.62,
+    "Jumeirah Beach Residence": 5.44,
+    "Dubai Hills Estate": 5.15,
+    "Downtown Dubai": 4.91,
+    "Arabian Ranches": 4.72,
+    "Palm Jumeirah": 4.19
+  },
+  "yield_matrix": {
+    "Arabian Ranches": {
+      "Apartment": null,
+      "Townhouse": 4.73,
+      "Villa": 4.7
+    },
+    "Business Bay": {
+      "Apartment": 5.92,
+      "Townhouse": null,
+      "Villa": null
+    },
+    "Downtown Dubai": {
+      "Apartment": 4.91,
+      "Townhouse": null,
+      "Villa": null
+    },
+    "Dubai Hills Estate": {
+      "Apartment": 5.29,
+      "Townhouse": 4.99,
+      "Villa": 5.13
+    },
+    "Dubai Marina": {
+      "Apartment": 5.62,
+      "Townhouse": null,
+      "Villa": null
+    },
+    "Dubai South": {
+      "Apartment": 7.56,
+      "Townhouse": 7.47,
+      "Villa": null
+    },
+    "Jumeirah Beach Residence": {
+      "Apartment": 5.44,
+      "Townhouse": null,
+      "Villa": null
+    },
+    "Jumeirah Village Circle (JVC)": {
+      "Apartment": 7.17,
+      "Townhouse": 7.05,
+      "Villa": null
+    },
+    "Palm Jumeirah": {
+      "Apartment": 4.29,
+      "Townhouse": null,
+      "Villa": 4.1
+    }
+  },
+  "budget_1_5m": [
+    {
+      "area": "Dubai South",
+      "n": 28,
+      "yield_": 7.62,
+      "price": 899178.57,
+      "rent": 67892.86,
+      "dom": 45.11
+    },
+    {
+      "area": "Jumeirah Village Circle (JVC)",
+      "n": 45,
+      "yield_": 7.29,
+      "price": 971800.0,
+      "rent": 70755.56,
+      "dom": 38.84
+    },
+    {
+      "area": "Business Bay",
+      "n": 32,
+      "yield_": 6.2,
+      "price": 1147468.75,
+      "rent": 70843.75,
+      "dom": 31.41
+    },
+    {
+      "area": "Dubai Marina",
+      "n": 45,
+      "yield_": 5.91,
+      "price": 1101022.22,
+      "rent": 64400.0,
+      "dom": 42.04
+    },
+    {
+      "area": "Jumeirah Beach Residence",
+      "n": 17,
+      "yield_": 5.75,
+      "price": 1198764.71,
+      "rent": 68941.18,
+      "dom": 37.53
+    },
+    {
+      "area": "Downtown Dubai",
+      "n": 23,
+      "yield_": 5.34,
+      "price": 1277478.26,
+      "rent": 67913.04,
+      "dom": 44.17
+    }
+  ],
+  "offplan_vs_ready_area": [
+    {
+      "area": "Arabian Ranches",
+      "Off-Plan": 1934.4,
+      "Ready": 1793.1,
+      "discount_pct": -7.9
+    },
+    {
+      "area": "Business Bay",
+      "Off-Plan": 2510.7,
+      "Ready": 2208.0,
+      "discount_pct": -13.7
+    },
+    {
+      "area": "Downtown Dubai",
+      "Off-Plan": 3352.5,
+      "Ready": 3209.2,
+      "discount_pct": -4.5
+    },
+    {
+      "area": "Dubai Hills Estate",
+      "Off-Plan": 2743.8,
+      "Ready": 2528.2,
+      "discount_pct": -8.5
+    },
+    {
+      "area": "Dubai Marina",
+      "Off-Plan": 2620.0,
+      "Ready": 2332.9,
+      "discount_pct": -12.3
+    },
+    {
+      "area": "Dubai South",
+      "Off-Plan": 1036.5,
+      "Ready": 933.1,
+      "discount_pct": -11.1
+    },
+    {
+      "area": "Jumeirah Beach Residence",
+      "Off-Plan": 2745.9,
+      "Ready": 2587.0,
+      "discount_pct": -6.1
+    },
+    {
+      "area": "Jumeirah Village Circle (JVC)",
+      "Off-Plan": 1416.0,
+      "Ready": 1295.9,
+      "discount_pct": -9.3
+    },
+    {
+      "area": "Palm Jumeirah",
+      "Off-Plan": 4431.5,
+      "Ready": 4096.6,
+      "discount_pct": -8.2
+    }
+  ],
+  "offplan_vs_ready_overall": {
+    "Off-Plan": 2240.3,
+    "Ready": 2405.9
+  },
+  "offplan_share_area": {
+    "Arabian Ranches": 20.9,
+    "Business Bay": 53.9,
+    "Downtown Dubai": 21.3,
+    "Dubai Hills Estate": 54.1,
+    "Dubai Marina": 19.6,
+    "Dubai South": 60.2,
+    "Jumeirah Beach Residence": 18.5,
+    "Jumeirah Village Circle (JVC)": 55.8,
+    "Palm Jumeirah": 19.5
+  },
+  "dev_dom": [
+    {
+      "developer": "Emaar",
+      "n": 138,
+      "dom": 20.5
+    },
+    {
+      "developer": "Damac",
+      "n": 135,
+      "dom": 21.4
+    },
+    {
+      "developer": "Others",
+      "n": 249,
+      "dom": 21.7
+    },
+    {
+      "developer": "Sobha",
+      "n": 102,
+      "dom": 23.1
+    },
+    {
+      "developer": "Danube",
+      "n": 72,
+      "dom": 24.1
+    },
+    {
+      "developer": "Nakheel",
+      "n": 11,
+      "dom": 35.1
+    }
+  ],
+  "payment_plan": {
+    "70/30": 197,
+    "60/40": 196,
+    "50/50": 166,
+    "80/20": 148
+  },
+  "sampling": {
+    "pop_mean": 2340.8,
+    "pop_sd": 884.3,
+    "pop_skew": 0.55,
+    "n30": {
+      "mean_of_means": 2340.9,
+      "se_empirical": 164.7,
+      "se_theory": 161.4,
+      "skew": 0.08
+    },
+    "n100": {
+      "mean_of_means": 2335.4,
+      "se_empirical": 86.3,
+      "se_theory": 88.4,
+      "skew": 0.03
+    }
+  },
+  "ci": {
+    "Dubai Marina": {
+      "n": 245,
+      "mean": 2389.13,
+      "low": 2340.14,
+      "high": 2438.13
+    },
+    "Jumeirah Village Circle (JVC)": {
+      "n": 317,
+      "mean": 1362.96,
+      "low": 1341.17,
+      "high": 1384.75
+    },
+    "Business Bay": {
+      "n": 319,
+      "mean": 2371.18,
+      "low": 2326.77,
+      "high": 2415.58
+    },
+    "Downtown Dubai": {
+      "n": 188,
+      "mean": 3239.7,
+      "low": 3164.12,
+      "high": 3315.27
+    }
+  },
+  "ci_yield_ready": {
+    "n": 1093,
+    "mean": 5.57,
+    "low": 5.51,
+    "high": 5.63
+  },
+  "overall_yield_avg": 5.571,
+  "tests": [
+    {
+      "name": "Marina vs Business Bay (price/sqft)",
+      "method": "Welch two-sample t-test",
+      "stat": 0.535,
+      "p": 0.593,
+      "detail": "2389 vs 2371 AED/sqft",
+      "reject_h0": false
+    },
+    {
+      "name": "Ready apartment yield vs overall ready average",
+      "method": "One-sample t-test",
+      "stat": 1.802,
+      "p": 0.0719,
+      "detail": "5.63% vs 5.57% (n=799)",
+      "reject_h0": false
+    },
+    {
+      "name": "Price/sqft across all 9 areas",
+      "method": "One-way ANOVA (Kruskal-Wallis check)",
+      "stat": 952.2,
+      "p": 0.0,
+      "detail": "F=952.2; Kruskal H=1408.5, p=8.1e-299",
+      "reject_h0": true
+    },
+    {
+      "name": "2025 vs 2024 price/sqft (Jan-Sep only)",
+      "method": "Welch t-test, one-sided",
+      "stat": 5.365,
+      "p": 5.56e-08,
+      "detail": "2514 vs 2167 AED/sqft",
+      "reject_h0": true
+    },
+    {
+      "name": "Off-plan vs ready inside Business Bay",
+      "method": "Welch two-sample t-test",
+      "stat": 7.183,
+      "p": 5.22e-12,
+      "detail": "2511 vs 2208 AED/sqft",
+      "reject_h0": true
+    }
+  ],
+  "power_marina_bb": {
+    "observed_d": 0.045,
+    "power_for_100aed": 0.84
+  },
+  "reg1": {
+    "r2": 0.752,
+    "slope": 2734.7,
+    "intercept": -608078
+  },
+  "reg2": {
+    "r2": 0.91,
+    "adj_r2": 0.909,
+    "coef": {
+      "area: Arabian Ranches": {
+        "b": -473380,
+        "p": 0.00904
+      },
+      "area: Business Bay": {
+        "b": 2208741,
+        "p": 5.63e-53
+      },
+      "area: Downtown Dubai": {
+        "b": 3109653,
+        "p": 7.07e-81
+      },
+      "area: Dubai Hills Estate": {
+        "b": 2257190,
+        "p": 1.57e-48
+      },
+      "area: Dubai Marina": {
+        "b": 2358196,
+        "p": 1.37e-53
+      },
+      "area: Jumeirah Beach Residence": {
+        "b": 2578803,
+        "p": 5.49e-54
+      },
+      "area: Jumeirah Village Circle (JVC)": {
+        "b": 449698,
+        "p": 0.00119
+      },
+      "area: Palm Jumeirah": {
+        "b": 6671998,
+        "p": 6.35e-236
+      },
+      "status: Off-Plan": {
+        "b": 333399,
+        "p": 5.99e-07
+      },
+      "size_sqft": {
+        "b": 3075,
+        "p": 0.0
+      },
+      "bedrooms": {
+        "b": -401636,
+        "p": 3.01e-13
+      }
+    }
+  },
+  "reg3_log": {
+    "r2": 0.96,
+    "size_elasticity": 0.883,
+    "offplan_pct": 10.0,
+    "palm_pct": 340.9
+  }
+}

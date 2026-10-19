@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dubai Real Estate Analyzer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f4f6; --surface:#ffffff; --border:#e3e5e8; --grid:#eceef1;
+  --ink:#0b0b0b; --ink2:#52514e; --muted:#7b7a75;
+  --title:#16324f; --title-ink:#ffffff;
+  --s1:#2a78d6; --s2:#eb6834; --s1-soft:#86b6ef;
+  --heat-lo:#cde2fb; --heat-hi:#1c5cab;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#111110; --surface:#1a1a19; --border:#2c2c2a; --grid:#262624;
+    --ink:#f0efec; --ink2:#c3c2b7; --muted:#9a998f;
+    --title:#0d2236; --title-ink:#f0efec;
+    --s1:#3987e5; --s2:#d95926; --s1-soft:#184f95;
+    --heat-lo:#184f95; --heat-hi:#86b6ef;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111110; --surface:#1a1a19; --border:#2c2c2a; --grid:#262624;
+  --ink:#f0efec; --ink2:#c3c2b7; --muted:#9a998f;
+  --title:#0d2236; --title-ink:#f0efec;
+  --s1:#3987e5; --s2:#d95926; --s1-soft:#184f95;
+  --heat-lo:#184f95; --heat-hi:#86b6ef;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif}
+header{background:var(--title);color:var(--title-ink);padding:14px 24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:20px;font-weight:600;letter-spacing:.2px}
+header .sub{font-size:12px;opacity:.8}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:transparent;color:var(--title-ink);border:1px solid rgba(255,255,255,.35);padding:7px 14px;border-radius:6px;cursor:pointer;font:inherit;font-size:13px}
+nav button[aria-selected="true"]{background:var(--title-ink);color:var(--title);font-weight:600}
+.slicers{display:flex;flex-wrap:wrap;gap:12px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);align-items:flex-end}
+.slicers label{display:flex;flex-direction:column;font-size:11px;color:var(--ink2);gap:3px;text-transform:uppercase;letter-spacing:.4px}
+.slicers select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--ink);min-width:130px}
+.slicers .budget{min-width:220px}
+.slicers input[type=range]{width:200px;accent-color:var(--s1)}
+.slicers button{font:inherit;font-size:12px;padding:6px 12px;border:1px solid var(--border);border-radius:5px;background:var(--bg);color:var(--ink);cursor:pointer}
+main{padding:18px 24px 8px;max-width:1500px;margin:0 auto}
+.page{display:none}
+.page.active{display:block}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(6,1fr)}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:2fr 1fr}
+.g21{grid-template-columns:1.3fr 1fr}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;min-width:0}
+.kpi .lbl{font-size:12px;color:var(--ink2)}
+.kpi .val{font-size:26px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .note{font-size:11px;color:var(--muted)}
+.card h3{margin:0 0 2px;font-size:14px;font-weight:600}
+.card .cap{margin:0 0 8px;font-size:12px;color:var(--muted)}
+.ch{position:relative;height:280px}
+.ch.tall{height:330px}
+.row{margin-top:14px}
+table.heat{width:100%;border-collapse:separate;border-spacing:2px;font-variant-numeric:tabular-nums;font-size:13px}
+table.heat th{font-weight:600;color:var(--ink2);text-align:left;padding:6px 8px;font-size:12px}
+table.heat td{padding:7px 8px;text-align:center;border-radius:4px}
+table.heat td.na{color:var(--muted)}
+.best .val{color:var(--s2)}
+.text ol{margin:6px 0 0;padding-left:20px}
+.text li{margin-bottom:10px}
+.text b{font-variant-numeric:tabular-nums}
+.reco{border-left:4px solid var(--s2)}
+footer{max-width:1500px;margin:0 auto;padding:10px 24px 24px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.pager button{font:inherit;font-size:12px;padding:5px 12px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--ink);cursor:pointer;margin-left:6px}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.g2,.g3,.g21{grid-template-columns:1fr}}
+@media (max-width:600px){header,main,.slicers,footer{padding-left:16px;padding-right:16px}.kpis{grid-template-columns:repeat(2,1fr)}.kpi .val{font-size:21px}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Dubai Real Estate Market Analyzer</h1><div class="sub">1,800 property sales · Jan 2023 – Sep 2026 · all amounts in AED</div></div>
+  <nav role="tablist">
+    <button role="tab" data-p="0" aria-selected="true">1 · Market Overview</button>
+    <button role="tab" data-p="1">2 · Investor View</button>
+    <button role="tab" data-p="2">3 · Timing &amp; Off-Plan</button>
+    <button role="tab" data-p="3">4 · Statistics &amp; Insights</button>
+  </nav>
+</header>
+
+<div class="slicers">
+  <label>Year<select id="f-year"></select></label>
+  <label>Area<select id="f-area"></select></label>
+  <label>Property type<select id="f-type"></select></label>
+  <label>Status<select id="f-status"></select></label>
+  <label>Buyer type<select id="f-buyer"></select></label>
+  <label class="budget">Max budget: <span id="budget-lbl"></span><input type="range" id="f-budget" min="500000" max="31000000" step="100000"></label>
+  <button id="reset">Reset filters</button>
+</div>
+
+<main>
+<!-- PAGE 1 -->
+<section class="page active" id="p0">
+  <div class="grid kpis">
+    <div class="card kpi"><div class="lbl">Total transactions</div><div class="val" id="k-tx"></div></div>
+    <div class="card kpi"><div class="lbl">Total sales value</div><div class="val" id="k-val"></div></div>
+    <div class="card kpi"><div class="lbl">Avg price per sq ft</div><div class="val" id="k-ppsf"></div></div>
+    <div class="card kpi"><div class="lbl">Median sale price</div><div class="val" id="k-med"></div></div>
+    <div class="card kpi"><div class="lbl">Avg gross yield</div><div class="val" id="k-yield"></div><div class="note">ready units only</div></div>
+    <div class="card kpi"><div class="lbl">Avg days on market</div><div class="val" id="k-dom"></div></div>
+  </div>
+  <div class="grid g3 row">
+    <div class="card"><h3>Price per sq ft rose about 14% a year from 2023 to 2025</h3><p class="cap">Avg price per sq ft by quarter (AED)</p><div class="ch"><canvas id="c-trend"></canvas></div></div>
+    <div class="card"><h3>7 in 10 sales are apartments</h3><p class="cap">Share of transactions by property type</p><div class="ch"><canvas id="c-type"></canvas></div></div>
+  </div>
+  <div class="card row"><h3>Palm Jumeirah costs 4× Dubai South per sq ft</h3><p class="cap">Avg price per sq ft by area (AED), sorted</p><div class="ch"><canvas id="c-area"></canvas></div></div>
+</section>
+
+<!-- PAGE 2 -->
+<section class="page" id="p1">
+  <div class="grid kpis">
+    <div class="card kpi best" style="grid-column:span 2"><div class="lbl">Best area for yield (current filters)</div><div class="val" id="k-best"></div><div class="note" id="k-best-n"></div></div>
+    <div class="card kpi"><div class="lbl">Avg gross yield</div><div class="val" id="k2-yield"></div></div>
+    <div class="card kpi"><div class="lbl">Ready units in view</div><div class="val" id="k2-n"></div></div>
+    <div class="card kpi"><div class="lbl">Avg annual rent</div><div class="val" id="k2-rent"></div></div>
+    <div class="card kpi"><div class="lbl">Median price (ready)</div><div class="val" id="k2-med"></div></div>
+  </div>
+  <div class="grid g2 row">
+    <div class="card"><h3>Dubai South and JVC pay over 7%; Palm Jumeirah about 4%</h3><p class="cap">Avg gross yield % by area (ready units). Orange = best in view</p><div class="ch tall"><canvas id="c-yield"></canvas></div></div>
+    <div class="card"><h3>The cheaper the area, the higher the yield</h3><p class="cap">Each bubble is an area · size = number of ready sales</p><div class="ch tall"><canvas id="c-scatter"></canvas></div></div>
+  </div>
+  <div class="card row"><h3>Yield depends on the area more than on the property type</h3><p class="cap">Avg gross yield % · rows: area · columns: property type · darker = higher</p><div id="heat"></div></div>
+</section>
+
+<!-- PAGE 3 -->
+<section class="page" id="p2">
+  <div class="grid g2">
+    <div class="card"><h3>January is the busiest month; sales slow in summer and during Ramadan</h3><p class="cap">Transactions by month · stacked by Ramadan period</p><div class="ch"><canvas id="c-month"></canvas></div></div>
+    <div class="card"><h3>Homes sell about a week faster since 2025</h3><p class="cap">Avg days on market by quarter</p><div class="ch"><canvas id="c-dom"></canvas></div></div>
+  </div>
+  <div class="card row"><h3>Inside every area, off-plan costs more per sq ft than ready</h3><p class="cap">Avg price per sq ft (AED) by area and status. Off-plan only looks cheaper overall because most of it is in low-cost areas</p><div class="ch"><canvas id="c-offplan"></canvas></div></div>
+  <div class="grid g2 row">
+    <div class="card"><h3>Emaar and Damac off-plan units sell fastest</h3><p class="cap">Avg days on market, off-plan sales by developer</p><div class="ch"><canvas id="c-dev"></canvas></div></div>
+    <div class="card"><h3>70/30 and 60/40 are the most common payment plans</h3><p class="cap">Off-plan transactions by payment plan</p><div class="ch"><canvas id="c-plan"></canvas></div></div>
+  </div>
+</section>
+
+<!-- PAGE 4 -->
+<section class="page" id="p3">
+  <div class="grid g2">
+    <div class="card"><h3>Price per sq ft has a long right tail from Palm Jumeirah</h3><p class="cap">Transactions by price-per-sq-ft bin · solid line = mean, dashed orange line = median</p><div class="ch"><canvas id="c-hist"></canvas></div></div>
+    <div class="card"><h3>Large villas pull the mean sale price above the median</h3><p class="cap">Mean vs median sale price by area (AED)</p><div class="ch"><canvas id="c-mm"></canvas></div></div>
+  </div>
+  <div class="grid g21 row">
+    <div class="card text"><h3>Key insights</h3>
+      <ol>
+        <li><b>Dubai South (7.5%) and JVC (7.1%)</b> have the highest gross yields of ready units, compared with <b>4.2%</b> in Palm Jumeirah. The ANOVA confirms that areas differ on price (F = 952, p &lt; 0.001).</li>
+        <li>Price per sq ft rose <b>14.0% (2024)</b> and <b>16.0% (2025)</b> when Jan–Sep is compared with Jan–Sep. The 2025 increase is significant (t = 5.37, p &lt; 0.001).</li>
+        <li>Off-plan looks <b>7% cheaper</b> overall (AED 2,240 vs 2,406 per sq ft). Inside every one of the 9 areas, though, it is <b>4–14% more expensive</b>. The overall gap comes from the area mix.</li>
+      </ol>
+    </div>
+    <div class="card text reco"><h3>Recommendation</h3>
+      <p>For an <b>AED 1.5M</b> rental-income budget, buy a <b>ready apartment in JVC</b>. The average price is <b>AED 0.97M</b>, the yield is <b>7.3%</b>, and the rent is about <b>AED 71k a year</b>, from 45 comparable sales.</p>
+      <p>Dubai South yields slightly more (7.6%). However, it has fewer comparable sales (28) and takes the longest to sell (45 days). Business Bay (6.2%) is the best choice for a more central location.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <span>Source: synthetic mock data, built by <span id="author"></span>. Not real market data.</span>
+  <span class="pager"><button id="prev">← Previous page</button><button id="next">Next page →</button></span>
+</footer>
+
+<script id="data" type="application/json">/*__DATA__*/</script>
+<script>
+const AUTHOR = "Umair Asif";
+document.getElementById("author").textContent = AUTHOR;
+
+const ROWS = JSON.parse(document.getElementById("data").textContent);
+const SHOT = new URLSearchParams(location.search);
+const AREAS = [...new Set(ROWS.map(r => r.a))].sort();
+const SHORT = {"Jumeirah Village Circle (JVC)":"JVC","Jumeirah Beach Residence":"JBR","Dubai Hills Estate":"Dubai Hills"};
+const sh = a => SHORT[a] || a;
+
+// ---------- formatting ----------
+const fmtAED = v => v == null || isNaN(v) ? "–" :
+  v >= 1e9 ? "AED " + (v/1e9).toFixed(2) + "B" :
+  v >= 1e6 ? "AED " + (v/1e6).toFixed(2) + "M" :
+  v >= 1e3 ? "AED " + (v/1e3).toFixed(0) + "k" : "AED " + Math.round(v);
+const fmtN = v => v == null || isNaN(v) ? "–" : Math.round(v).toLocaleString("en-US");
+const fmtP = v => v == null || isNaN(v) ? "–" : v.toFixed(2) + "%";
+
+// ---------- measures (mirror the DAX in powerbi_kit/measures.dax) ----------
+const avg = (a, f) => { const v = a.map(f).filter(x => x != null); return v.length ? v.reduce((s,x)=>s+x,0)/v.length : null; };
+const median = (a, f) => { const v = a.map(f).filter(x => x != null).sort((x,y)=>x-y); if(!v.length) return null; const m = v.length>>1; return v.length%2 ? v[m] : (v[m-1]+v[m])/2; };
+const sum = (a, f) => a.reduce((s,r)=>s+f(r),0);
+const groupBy = (a, f) => a.reduce((m,r)=>{ const k=f(r); (m[k] ||= []).push(r); return m; }, {});
+
+// ---------- slicers ----------
+const F = {year:"f-year", area:"f-area", type:"f-type", status:"f-status", buyer:"f-buyer"};
+const OPTS = {year:[...new Set(ROWS.map(r=>r.y))].sort(), area:AREAS,
+  type:["Apartment","Townhouse","Villa"], status:["Ready","Off-Plan"], buyer:["Investor","End-user"]};
+for (const [k,id] of Object.entries(F)) {
+  const s = document.getElementById(id);
+  s.innerHTML = `<option value="">All</option>` + OPTS[k].map(o=>`<option>${o}</option>`).join("");
+  s.addEventListener("change", render);
+}
+const budget = document.getElementById("f-budget");
+const BMAX = +budget.max; budget.value = BMAX;
+budget.addEventListener("input", render);
+document.getElementById("reset").onclick = () => { Object.values(F).forEach(id=>document.getElementById(id).value=""); budget.value=BMAX; render(); };
+
+function filtered() {
+  const v = k => document.getElementById(F[k]).value;
+  const b = +budget.value;
+  document.getElementById("budget-lbl").textContent = b >= BMAX ? "Any" : fmtAED(b);
+  return ROWS.filter(r =>
+    (!v("year") || r.y == v("year")) && (!v("area") || r.a === v("area")) &&
+    (!v("type") || r.t === v("type")) && (!v("status") || r.s === v("status")) &&
+    (!v("buyer") || r.b === v("buyer")) && (b >= BMAX || r.p <= b));
+}
+
+// ---------- tabs ----------
+let page = +(SHOT.get("page") || 0);
+const tabs = [...document.querySelectorAll("nav button")];
+function go(p) {
+  page = (p + 4) % 4;
+  tabs.forEach((t,i)=>t.setAttribute("aria-selected", i===page));
+  document.querySelectorAll(".page").forEach((s,i)=>s.classList.toggle("active", i===page));
+  render();
+}
+tabs.forEach(t => t.onclick = () => go(+t.dataset.p));
+document.getElementById("prev").onclick = () => go(page-1);
+document.getElementById("next").onclick = () => go(page+1);
+
+// ---------- charts ----------
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+Chart.defaults.font.family = '"Segoe UI", system-ui, sans-serif';
+Chart.defaults.animation = SHOT.has("shot") ? false : {duration:300};
+const charts = {};
+function chart(id, cfg) {
+  const ink2 = css("--ink2"), grid = css("--grid");
+  Chart.defaults.color = ink2;
+  const o = cfg.options || {}, p = o.plugins || {};
+  cfg.options = Object.assign({responsive:true, maintainAspectRatio:false}, o, {plugins:Object.assign({}, p, {
+    legend:Object.assign({display:false, labels:{boxWidth:12, boxHeight:12, useBorderRadius:true, borderRadius:2, color:ink2}}, p.legend || {}),
+    tooltip:Object.assign({backgroundColor:css("--surface"), titleColor:css("--ink"), bodyColor:css("--ink2"),
+                           borderColor:css("--border"), borderWidth:1, padding:10}, p.tooltip || {})})});
+  for (const ax of Object.values(cfg.options.scales || {})) {
+    ax.grid = Object.assign({color:grid, drawTicks:false}, ax.grid || {});
+    ax.border = {display:false};
+  }
+  if (charts[id]) { charts[id].data = cfg.data; charts[id].options = cfg.options; charts[id].update(); return; }
+  charts[id] = new Chart(document.getElementById(id), cfg);
+}
+const barDs = (data, color, extra={}) => Object.assign({data, backgroundColor:color, borderRadius:4, borderSkipped:"start", maxBarThickness:34}, extra);
+const yq = rows => { const g = groupBy(rows, r=>r.y+"-"+r.q); return Object.keys(g).sort().map(k=>[k,g[k]]); };
+
+// vertical reference lines for the histogram (mean / median)
+const refLines = {id:"refLines", afterDatasetsDraw(c, _, o) {
+  if (!o.lines) return;
+  const {ctx, chartArea:{top,bottom}, scales:{x}} = c;
+  o.lines.forEach(l => { if (l.v == null) return;
+    const px = x.getPixelForValue(l.v); ctx.save(); ctx.strokeStyle = l.color; ctx.lineWidth = 2;
+    if (l.dash) ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, bottom); ctx.stroke();
+    ctx.fillStyle = css("--ink2"); ctx.font = "11px Segoe UI"; const w = ctx.measureText(l.label).width; ctx.fillText(l.label, l.dash ? px + 5 : px - w - 5, top + (l.dash ? 28 : 12)); ctx.restore(); });
+}};
+Chart.register(refLines);
+
+function render() {
+  const rows = filtered();
+  const ready = rows.filter(r => r.yl != null);
+  const S1 = css("--s1"), S2 = css("--s2"), S1s = css("--s1-soft");
+
+  if (page === 0) {
+    document.getElementById("k-tx").textContent = fmtN(rows.length);
+    document.getElementById("k-val").textContent = fmtAED(sum(rows, r=>r.p));
+    document.getElementById("k-ppsf").textContent = fmtN(avg(rows, r=>r.pp));
+    document.getElementById("k-med").textContent = fmtAED(median(rows, r=>r.p));
+    document.getElementById("k-yield").textContent = fmtP(avg(rows, r=>r.yl));
+    document.getElementById("k-dom").textContent = avg(rows, r=>r.dom)?.toFixed(1) ?? "–";
+    const t = yq(rows);
+    chart("c-trend", {type:"line", data:{labels:t.map(x=>x[0]), datasets:[{data:t.map(x=>avg(x[1],r=>r.pp)), borderColor:S1, backgroundColor:S1, borderWidth:2, pointRadius:4, pointHoverRadius:6, tension:.25}]},
+      options:{interaction:{mode:"index", intersect:false}, scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>fmtN(v)}}},
+        plugins:{tooltip:{callbacks:{label:c=>" "+fmtN(c.raw)+" AED/sqft"}}}}});
+    const ty = groupBy(rows, r=>r.t), tk = ["Apartment","Townhouse","Villa"].filter(k=>ty[k]);
+    chart("c-type", {type:"bar", data:{labels:tk, datasets:[barDs(tk.map(k=>ty[k].length/rows.length*100), S1)]},
+      options:{indexAxis:"y", scales:{x:{ticks:{callback:v=>v+"%"}}, y:{grid:{display:false}}},
+        plugins:{tooltip:{callbacks:{label:c=>` ${c.raw.toFixed(1)}% · ${ty[c.label].length} sales`}}}}});
+    const ga = groupBy(rows, r=>r.a), ak = Object.keys(ga).map(a=>[a, avg(ga[a], r=>r.pp)]).sort((x,y)=>y[1]-x[1]);
+    chart("c-area", {type:"bar", data:{labels:ak.map(x=>sh(x[0])), datasets:[barDs(ak.map(x=>x[1]), S1)]},
+      options:{scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>fmtN(v)}}},
+        plugins:{tooltip:{callbacks:{label:c=>" "+fmtN(c.raw)+" AED/sqft"}}}}});
+  }
+
+  if (page === 1) {
+    const ga = groupBy(ready, r=>r.a);
+    const ys = Object.keys(ga).map(a=>({a, y:avg(ga[a],r=>r.yl), pp:avg(ga[a],r=>r.pp), n:ga[a].length})).sort((x,y)=>y.y-x.y);
+    const best = ys[0];
+    document.getElementById("k-best").textContent = best ? `${best.a} · ${fmtP(best.y)}` : "No ready units";
+    document.getElementById("k-best-n").textContent = best ? `based on ${best.n} ready sales` : "";
+    document.getElementById("k2-yield").textContent = fmtP(avg(ready, r=>r.yl));
+    document.getElementById("k2-n").textContent = fmtN(ready.length);
+    document.getElementById("k2-rent").textContent = fmtAED(avg(ready, r=>r.rent));
+    document.getElementById("k2-med").textContent = fmtAED(median(ready, r=>r.p));
+    chart("c-yield", {type:"bar", data:{labels:ys.map(x=>sh(x.a)), datasets:[barDs(ys.map(x=>x.y), ys.map((_,i)=>i===0?S2:S1))]},
+      options:{indexAxis:"y", scales:{x:{min:0, ticks:{callback:v=>v+"%"}}, y:{grid:{display:false}}},
+        plugins:{tooltip:{callbacks:{label:c=>` ${c.raw.toFixed(2)}% · ${ys[c.dataIndex].n} ready sales`}}}}});
+    const maxN = Math.max(...ys.map(x=>x.n), 1);
+    chart("c-scatter", {type:"bubble", data:{datasets:[{data:ys.map(x=>({x:x.pp, y:x.y, r:6+16*Math.sqrt(x.n/maxN), a:x.a, n:x.n})),
+        backgroundColor:S1+"cc", borderColor:css("--surface"), borderWidth:2, hoverBorderColor:S2}]},
+      options:{layout:{padding:{right:70}}, scales:{x:{title:{display:true, text:"Avg price per sq ft (AED)"}, ticks:{callback:v=>fmtN(v)}},
+                        y:{title:{display:true, text:"Avg gross yield %"}, ticks:{callback:v=>v+"%"}}},
+        plugins:{tooltip:{callbacks:{label:c=>` ${c.raw.a}: ${fmtN(c.raw.x)} AED/sqft · ${c.raw.y.toFixed(2)}% · ${c.raw.n} sales`}}}},
+      plugins:[{id:"lbl", afterDatasetsDraw(c){ const {ctx}=c; ctx.save(); ctx.fillStyle=css("--ink2"); ctx.font="11px Segoe UI";
+        c.getDatasetMeta(0).data.forEach((p,i)=>ctx.fillText(sh(c.data.datasets[0].data[i].a), p.x+ c.data.datasets[0].data[i].r + 3, p.y+4)); ctx.restore(); }}]});
+    // heat matrix
+    const types = ["Apartment","Townhouse","Villa"];
+    const cells = AREAS.map(a => types.map(t => avg(ready.filter(r=>r.a===a && r.t===t), r=>r.yl)));
+    const vals = cells.flat().filter(v=>v!=null), lo = Math.min(...vals), hi = Math.max(...vals);
+    const mix = (c1,c2,f)=>{ const h=c=>c.match(/\w\w/g).map(x=>parseInt(x,16)); const a=h(c1), b=h(c2); return "rgb("+a.map((v,i)=>Math.round(v+(b[i]-v)*f)).join(",")+")"; };
+    const HLO = css("--heat-lo"), HHI = css("--heat-hi");
+    document.getElementById("heat").innerHTML = `<table class="heat"><thead><tr><th>Area</th>${types.map(t=>`<th style="text-align:center">${t}</th>`).join("")}<th style="text-align:center">All types</th></tr></thead><tbody>` +
+      AREAS.map((a,i)=>{ const all = avg(ready.filter(r=>r.a===a), r=>r.yl);
+        const td = v => { if (v==null) return `<td class="na">–</td>`; const f = hi>lo ? (v-lo)/(hi-lo) : .5;
+          return `<td style="background:${mix(HLO,HHI,f)};color:${f>.55?"#fff":"#0b0b0b"}">${v.toFixed(2)}%</td>`; };
+        return `<tr><th>${a}</th>${cells[i].map(td).join("")}${td(all)}</tr>`; }).join("") + `</tbody></table>`;
+  }
+
+  if (page === 2) {
+    const M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const cnt = (f) => M.map((_,i)=>rows.filter(r=>r.m===i+1 && f(r)).length);
+    chart("c-month", {type:"bar", data:{labels:M, datasets:[
+        barDs(cnt(r=>!r.r), S1, {label:"Outside Ramadan", borderRadius:0, borderColor:css("--surface"), borderWidth:{top:2}}),
+        barDs(cnt(r=>r.r), S2, {label:"During Ramadan", borderRadius:{topLeft:4, topRight:4}})]},
+      options:{interaction:{mode:"index"}, scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true}},
+        plugins:{legend:{display:true, position:"top", align:"end"}}}});
+    const t = yq(rows);
+    chart("c-dom", {type:"line", data:{labels:t.map(x=>x[0]), datasets:[{data:t.map(x=>avg(x[1],r=>r.dom)), borderColor:S1, backgroundColor:S1, borderWidth:2, pointRadius:4, tension:.25}]},
+      options:{interaction:{mode:"index", intersect:false}, scales:{x:{grid:{display:false}}, y:{min:0, title:{display:true, text:"days"}}},
+        plugins:{tooltip:{callbacks:{label:c=>" "+c.raw.toFixed(1)+" days"}}}}});
+    const ga = groupBy(rows, r=>r.a);
+    const ak = Object.keys(ga).sort((x,y)=>avg(ga[y],r=>r.pp)-avg(ga[x],r=>r.pp));
+    chart("c-offplan", {type:"bar", data:{labels:ak.map(sh), datasets:[
+        barDs(ak.map(a=>avg(ga[a].filter(r=>r.s==="Off-Plan"),r=>r.pp)), S2, {label:"Off-Plan"}),
+        barDs(ak.map(a=>avg(ga[a].filter(r=>r.s==="Ready"),r=>r.pp)), S1, {label:"Ready"})]},
+      options:{interaction:{mode:"index"}, scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>fmtN(v)}}},
+        plugins:{legend:{display:true, position:"top", align:"end"}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fmtN(c.raw)} AED/sqft`}}}}});
+    const op = rows.filter(r=>r.s==="Off-Plan");
+    const gd = groupBy(op, r=>r.dev), dk = Object.keys(gd).map(d=>[d, avg(gd[d],r=>r.dom), gd[d].length]).sort((x,y)=>x[1]-y[1]);
+    chart("c-dev", {type:"bar", data:{labels:dk.map(x=>x[0]), datasets:[barDs(dk.map(x=>x[1]), dk.map((_,i)=>i===0?S2:S1))]},
+      options:{indexAxis:"y", scales:{x:{min:0, title:{display:true, text:"days"}}, y:{grid:{display:false}}},
+        plugins:{tooltip:{callbacks:{label:c=>` ${c.raw.toFixed(1)} days · ${dk[c.dataIndex][2]} sales`}}}}});
+    const gp = groupBy(op, r=>r.pl), pk = Object.keys(gp).sort((x,y)=>gp[y].length-gp[x].length);
+    chart("c-plan", {type:"bar", data:{labels:pk, datasets:[barDs(pk.map(k=>gp[k].length), S1)]},
+      options:{scales:{x:{grid:{display:false}}, y:{min:0}},
+        plugins:{tooltip:{callbacks:{label:c=>` ${c.raw} sales · ${(c.raw/op.length*100).toFixed(1)}%`}}}}});
+  }
+
+  if (page === 3) {
+    const W = 250, bins = {}; rows.forEach(r => { const b = Math.floor(r.pp/W)*W; bins[b] = (bins[b]||0)+1; });
+    const lo = Math.min(...Object.keys(bins).map(Number)), hi = Math.max(...Object.keys(bins).map(Number));
+    const pts = []; for (let b = lo; b <= hi; b += W) pts.push({x:b + W/2, y:bins[b]||0});
+    chart("c-hist", {type:"bar", data:{datasets:[barDs(pts, S1, {barPercentage:1, categoryPercentage:1, borderColor:css("--surface"), borderWidth:1, borderRadius:2})]},
+      options:{scales:{x:{type:"linear", offset:false, grid:{display:false}, ticks:{callback:v=>fmtN(v)}, title:{display:true, text:"AED per sq ft"}}, y:{title:{display:true, text:"transactions"}}},
+        plugins:{refLines:{lines:[{v:avg(rows,r=>r.pp), color:css("--ink"), label:"Mean "+fmtN(avg(rows,r=>r.pp))},
+                                   {v:median(rows,r=>r.pp), color:S2, dash:true, label:"Median "+fmtN(median(rows,r=>r.pp))}]},
+                 tooltip:{callbacks:{title:c=>`${fmtN(c[0].raw.x-W/2)} – ${fmtN(c[0].raw.x+W/2)} AED/sqft`, label:c=>` ${c.raw.y} sales`}}}}});
+    const ga = groupBy(rows, r=>r.a), ak = Object.keys(ga).sort((x,y)=>avg(ga[y],r=>r.p)-avg(ga[x],r=>r.p));
+    chart("c-mm", {type:"bar", data:{labels:ak.map(sh), datasets:[
+        barDs(ak.map(a=>avg(ga[a],r=>r.p)), S1, {label:"Mean"}), barDs(ak.map(a=>median(ga[a],r=>r.p)), S2, {label:"Median"})]},
+      options:{interaction:{mode:"index"}, scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>(v/1e6)+"M"}}},
+        plugins:{legend:{display:true, position:"top", align:"end"}, tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${fmtAED(c.raw)}`}}}}});
+  }
+}
+go(page);
+</script>
+</body>
+</html>
